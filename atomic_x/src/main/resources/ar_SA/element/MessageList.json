@@ -251,6 +251,22 @@
     {
       "name": "messagelist_violation_warning",
       "value": "يحتوي على محتوى حساس"
+    },
+    {
+      "name": "read_receipt_all_read",
+      "value": "قرأ الكل"
+    },
+    {
+      "name": "read_receipt_n_person_read",
+      "value": "قرأ %d"
+    },
+    {
+      "name": "read_receipt_read_by",
+      "value": "قرأ بواسطة"
+    },
+    {
+      "name": "read_receipt_delivered_to",
+      "value": "تم التسليم إلى"
     }
   ]
 }

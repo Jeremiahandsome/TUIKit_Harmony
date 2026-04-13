@@ -69,6 +69,14 @@
       "value": "Failed to load"
     },
     {
+      "name": "read_receipt_all_read",
+      "value": "All Read"
+    },
+    {
+      "name": "read_receipt_n_person_read",
+      "value": "%d Read"
+    },
+    {
       "name": "messagelist_loading_more",
       "value": "Loading more"
     },

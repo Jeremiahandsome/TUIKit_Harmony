@@ -26,6 +26,16 @@ import {
 import { TextUtils } from '../../basecomponent/Index';
 import { util } from '@kit.ArkTS';
 
+export class ReadReceiptLabelInfo {
+  text: string;
+  isHighlight: boolean;
+
+  constructor(text: string, isHighlight: boolean) {
+    this.text = text;
+    this.isHighlight = isHighlight;
+  }
+}
+
 export class MessageUtils {
   static getSystemInfoDisplayString(systemInfo?: SystemMessageInfo): string | Resource {
     if (!systemInfo) {
@@ -376,6 +386,36 @@ export class MessageUtils {
     }
 
     return $rawfile('messagelist/msg_status_some_people_read.svg');
+  }
+
+  static getReadReceiptLabelInfo(message: MessageInfo): ReadReceiptLabelInfo | null {
+    const isGroup = !!message.groupID && message.groupID.length > 0;
+
+    if (!isGroup) {
+      const peerRead = message.receipt?.isPeerRead === true;
+      if (peerRead) {
+        return new ReadReceiptLabelInfo(getContext().resourceManager.getStringSync($r('app.string.read_receipt_read_by').id), false);
+      } else {
+        return new ReadReceiptLabelInfo(getContext().resourceManager.getStringSync($r('app.string.read_receipt_delivered_to').id), true);
+      }
+    }
+
+    const readCount = message.receipt?.readCount ?? 0;
+    const unreadCount = message.receipt?.unreadCount ?? 0;
+    const totalCount = readCount + unreadCount;
+
+    if (totalCount > 0 && readCount === totalCount) {
+      return new ReadReceiptLabelInfo(getContext().resourceManager.getStringSync($r('app.string.read_receipt_all_read').id), false);
+    } else if (readCount > 0) {
+      try {
+        const template = getContext().resourceManager.getStringSync($r('app.string.read_receipt_n_person_read').id);
+        return new ReadReceiptLabelInfo(template.replace('%d', readCount.toString()), true);
+      } catch (e) {
+        return new ReadReceiptLabelInfo(`${readCount}`, true);
+      }
+    } else {
+      return new ReadReceiptLabelInfo(getContext().resourceManager.getStringSync($r('app.string.read_receipt_delivered_to').id), true);
+    }
   }
 
   /**

@@ -56,6 +56,8 @@
     { "name": "read_receipt_read_by", "value": "已读" },
     { "name": "read_receipt_delivered_to", "value": "未读" },
     { "name": "read_receipt_load_failed", "value": "加载失败" },
+    { "name": "read_receipt_all_read", "value": "全部已读" },
+    { "name": "read_receipt_n_person_read", "value": "%d人已读" },
     { "name": "messagelist_loading_more", "value": "加载更多" },
     { "name": "messagelist_loading", "value": "加载中..." },
     { "name": "messagelist_loading_history", "value": "加载历史消息..." },

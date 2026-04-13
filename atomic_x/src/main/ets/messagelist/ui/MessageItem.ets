@@ -37,6 +37,7 @@ import { ClassicMessageActionPopup, ClassicCustomActionItem } from './ClassicMes
 import { EmojiItem } from '../../emojipicker/data/EmojiData';
 import { EmojiDataManager, EmojiTextSegment } from '../../emojipicker/Index';
 import { MessageRenderContext } from '../context/MessageRenderContext';
+import { MessageUtils, ReadReceiptLabelInfo } from '../utils/MessageUtils';
 
 /**
  * Display mode for MessageItem
@@ -434,6 +435,46 @@ export struct MessageItem {
         this.showClassicActionPopup = false;
       }
     })
+  }
+
+  private shouldShowOutsideReadReceipt(): boolean {
+    const isMerged = this.displayMode === MessageDisplayMode.Merged;
+    if (isMerged) return false;
+    return MessageUtils.shouldShowReadReceipt(
+      this.message,
+      this.effectiveConfig.enableReadReceipt ?? AppBuilderConfig.getInstance().enableReadReceipt,
+      isMerged
+    );
+  }
+
+  @Builder
+  ReadReceiptLabel() {
+    if (this.shouldShowOutsideReadReceipt()) {
+      Text(this.getReadReceiptText())
+        .fontSize(12)
+        .fontColor(this.getReadReceiptColor())
+        .fontWeight(FontWeight.Regular)
+        .margin({ left: 4, right: 4 })
+        .onClick(() => {
+          const isGroup = !!this.message.groupID && this.message.groupID.length > 0;
+          if (isGroup && this.onDetail) {
+            this.onDetail(this.message);
+          }
+        })
+    }
+  }
+
+  private getReadReceiptText(): string {
+    const labelInfo: ReadReceiptLabelInfo | null = MessageUtils.getReadReceiptLabelInfo(this.message);
+    return labelInfo?.text ?? '';
+  }
+
+  private getReadReceiptColor(): ResourceColor {
+    const labelInfo: ReadReceiptLabelInfo | null = MessageUtils.getReadReceiptLabelInfo(this.message);
+    if (labelInfo?.isHighlight) {
+      return this.themeState.colors.textColorLink;
+    }
+    return this.themeState.colors.textColorSecondary;
   }
 
   @Builder
@@ -958,6 +999,11 @@ export struct MessageItem {
                 }
               })
           }
+
+          // Read receipt label outside bubble
+          if (this.message.isSelf) {
+            this.ReadReceiptLabel()
+          }
         }
         .width('90%')
         .justifyContent(FlexAlign.Start)
@@ -1018,6 +1064,11 @@ export struct MessageItem {
         .margin({ bottom: 8 })
       } else {
         Row() {
+          // Read receipt label outside bubble
+          if (this.message.isSelf) {
+            this.ReadReceiptLabel()
+          }
+
           if (this.message.isSelf && (this.message.status === MessageStatus.sendFail || this.message.status === MessageStatus.violation)) {
             Image($rawfile('messagelist/icon_message_send_error.svg'))
               .width(16)
@@ -1144,6 +1195,9 @@ export struct MessageItem {
           if (this.message.isSelf) {
             // Sender's message (right side)
             Row() {
+              // Read receipt label outside bubble
+              this.ReadReceiptLabel()
+
               if (this.message.status === MessageStatus.sendFail || this.message.status === MessageStatus.violation) {
                 Image($rawfile('messagelist/icon_message_send_error.svg'))
                   .width(16)

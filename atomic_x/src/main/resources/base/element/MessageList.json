@@ -56,6 +56,8 @@
     { "name": "read_receipt_read_by", "value": "Read by" },
     { "name": "read_receipt_delivered_to", "value": "Delivered to" },
     { "name": "read_receipt_load_failed", "value": "Failed to load" },
+    { "name": "read_receipt_all_read", "value": "All Read" },
+    { "name": "read_receipt_n_person_read", "value": "%d Read" },
     { "name": "messagelist_loading_more", "value": "Loading more" },
     { "name": "messagelist_loading", "value": "Loading..." },
     { "name": "messagelist_loading_history", "value": "Loading history..." },

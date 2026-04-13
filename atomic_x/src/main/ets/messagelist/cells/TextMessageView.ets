@@ -1,12 +1,8 @@
-import { MessageInfo, MessageStatus, MessageActionStore, ErrorInfo } from '@tencentcloud/atomicxcore';
-import { ImageSizeUtil, ThemeState, LanguageState } from '../../basecomponent/Index';
+import { MessageInfo } from '@tencentcloud/atomicxcore';
+import { ThemeState, LanguageState } from '../../basecomponent/Index';
 import { MessageBody } from '@tencentcloud/atomicxcore';
-import { MessageListStore } from '@tencentcloud/atomicxcore';
 import { EmojiDataManager, EmojiTextSegment } from '../../emojipicker/Index';
-import { AppBuilderConfig } from '../../basecomponent/utils/AppBuilderHelper';
 import { MessageListStyleProtocol } from '../config/MessageListConfig';
-import { MessageUtils } from '../utils/MessageUtils';
-import { LengthMetrics } from '@kit.ArkUI';
 import { MessageRenderContext } from '../context/MessageRenderContext';
 
 @Component
@@ -27,16 +23,6 @@ export struct TextMessageViewContent {
     this.updateParsedSegments();
   }
 
-  private shouldShowReceipt(): boolean {
-    return this.message !== undefined && MessageUtils.shouldShowReadReceipt(this.message,
-      this.config?.enableReadReceipt ?? AppBuilderConfig.getInstance().enableReadReceipt,
-      this.isInMergedDetailView);
-  }
-
-  private shouldShowSending(): boolean {
-    return this.message?.status === MessageStatus.sending;
-  }
-
   build() {
     Column() {
       // Text content
@@ -53,7 +39,7 @@ export struct TextMessageViewContent {
           }
         }, (segment: EmojiTextSegment, index: number) => `${segment.type}_${index}_${segment.content}`)
       }
-      .fontSize(14)
+      .fontSize(15)
       .fontColor(this.message?.isSelf ?
         this.themeState.colors.textColorAntiPrimary :
         this.themeState.colors.textColorPrimary)
@@ -61,24 +47,6 @@ export struct TextMessageViewContent {
       .maxLines(999)
       .wordBreak(WordBreak.BREAK_ALL)
       .direction(this.languageState.getLayoutDirection() === LayoutDirection.RTL ? Direction.Rtl : Direction.Ltr)
-      // Read receipt indicator on new line
-      if (this.shouldShowReceipt() || this.shouldShowSending()) {
-        Row() {
-          if (this.shouldShowReceipt() && this.message) {
-            Image(MessageUtils.getReadReceiptIconResource(this.message))
-              .width(14)
-              .height(14)
-          }
-
-          if (this.shouldShowSending()) {
-            LoadingProgress()
-              .width(12)
-              .height(12)
-          }
-        }
-        .alignSelf(ItemAlign.End)
-        .margin({ top: 2 })
-      }
     }
     .padding({
       left: 8,
