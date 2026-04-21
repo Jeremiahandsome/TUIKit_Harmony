@@ -810,7 +810,7 @@ export struct MessageInput {
       return;
     }
     const user_file_uri = mediaPath;
-    const tempDir = this.context.cacheDir + "/media/";
+    const tempDir = this.context.getApplicationContext().cacheDir + "/media/";
     const fileName = user_file_uri.split("/").pop() || `temp_${Date.now()}`;
     const app_file_path = tempDir + fileName;
 
@@ -821,11 +821,16 @@ export struct MessageInput {
       // Directory might already exist, ignore error
     }
 
-    let user_file = await fs.open(user_file_uri, fs.OpenMode.READ_ONLY);
-    let app_file = await fs.open(app_file_path, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-    await fs.copyFile(user_file.fd, app_file.fd, 0);
-    await fs.close(user_file);
-    await fs.close(app_file);
+    try {
+      let user_file = await fs.open(user_file_uri, fs.OpenMode.READ_ONLY);
+      let app_file = await fs.open(app_file_path, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+      await fs.copyFile(user_file.fd, app_file.fd, 0);
+      await fs.close(user_file);
+      await fs.close(app_file);
+    } catch (copyError) {
+      console.error(`[MessageInput] File copy FAILED: ${JSON.stringify(copyError)}`);
+      return;
+    }
 
     try {
       
@@ -1190,7 +1195,7 @@ export struct MessageInput {
     }
 
     const user_file_uri = filePath;
-    const tempDir = this.context.cacheDir + "/media/";
+    const tempDir = this.context.getApplicationContext().cacheDir + "/media/";
     const fileName = user_file_uri.split("/").pop() || `temp_file_${Date.now()}`;
     const app_file_path = tempDir + fileName;
 

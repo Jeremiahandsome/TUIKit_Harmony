@@ -28,6 +28,8 @@ struct SplashScreenPage {
           }).catch((reason: Object) => {
             Log.i("DevLoginPage", "TUICallKit login failed, " + reason);
           });
+
+          return router.replaceUrl({ url: "pages/HomePage" });
         })
         .catch((reason: Object) => {
           Log.e("SplashScreenPage", "auto login failed, " + reason);
