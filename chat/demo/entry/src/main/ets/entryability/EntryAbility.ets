@@ -6,6 +6,7 @@ import { ThemeState } from '@tencentcloud/atomicx';
 import { i18n } from '@kit.LocalizationKit';
 import { AppBuilderConfig, AppBuilderHelper } from '@tencentcloud/atomicx';
 import { ContextProvider } from '@tencentcloud/atomicx'
+import { TUICallKit } from '@tencentcloud/tuicallkit';
 
 const DOMAIN = 0x0000;
 
@@ -25,6 +26,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     // Main window is created, set main page for this ability
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
+    TUICallKit.createInstance(this.context).attach(windowStage);
 
     windowStage.loadContent('pages/SplashScreenPage', (err) => {
       if (err.code) {
@@ -38,6 +40,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageDestroy(): void {
     // Main window is destroyed, release UI related resources
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
+    TUICallKit.createInstance(this.context).detach();
   }
 
   onForeground(): void {
